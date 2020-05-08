@@ -20,9 +20,10 @@ import {
 
 export default function User({navigation, route}) {
     const [stars, setStars] = useState([]);
-    const [loading, setLoading] = useState(false);
-    const [refreshing, setRefresh] = useState(false);
     const [page, setPage] = useState(1);
+
+    const [loading, setLoading] = useState(false);
+    const [refresh, setRefresh] = useState(false);
     const [loadingMore, setLoadingMore] = useState(false);
     navigation.setOptions({
         title: route.params.user.name,
@@ -40,19 +41,18 @@ export default function User({navigation, route}) {
     };
 
     const loadMore = async () => {
+        // se ja foi chamado
+        if (loadingMore) return null;
+
         setLoadingMore(true);
         setPage(page + 1);
         const response = await handleRequestApi();
-        setStars([...stars, response.data]);
+        setStars([...stars, ...response.data]);
         setLoadingMore(false);
     };
     const footerComponent = () => {
         if (!loadingMore) return null;
-        return (
-            <LoadingView>
-                <ActivityIndicator size={40} color="#3498db" />
-            </LoadingView>
-        );
+        return <ActivityIndicator size={20} color="#3498db" />;
     };
     const refreshList = async () => {
         setRefresh(true);
@@ -84,8 +84,8 @@ export default function User({navigation, route}) {
                     onEndReached={loadMore}
                     ListFooterComponent={footerComponent}
                     keyExtractor={(star) => String(star.id)}
-                    onRefresh={refreshList} // Função dispara quando o usuário arrasta a lista pra baixo
-                    refreshing={refreshing}
+                    refreshing={refresh}
+                    onRefresh={refreshList}
                     renderItem={({item}) => (
                         <Starred>
                             <OwnerAvatar
