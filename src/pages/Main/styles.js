@@ -87,3 +87,8 @@ export const ProfileButtonText = styled.Text`
     color: #fff;
     text-transform: uppercase;
 `;
+
+export const DeleteView = styled.View`
+    flex: 1;
+    background-color: rgba(231, 76, 60, 0.4);
+`;

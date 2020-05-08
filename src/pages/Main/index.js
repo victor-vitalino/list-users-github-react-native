@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {Keyboard, ActivityIndicator, Text} from 'react-native';
+import {Keyboard, ActivityIndicator} from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import PropTypes from 'prop-types';
@@ -18,6 +18,7 @@ import {
     Bio,
     ProfileButton,
     ProfileButtonText,
+    DeleteView,
 } from './styles';
 import api from '../../services/api';
 
@@ -55,12 +56,12 @@ export default function Main({navigation}) {
         setLoading(false);
     };
 
-    const renderLeftActions = (progress, dragX) => {
-        const trans = dragX.interpolate({
-            inputRange: [0, 50, 100, 101],
-            outputRange: [-20, 0, 0, 1],
-        });
-        return <Text>ok</Text>;
+    const renderLeftActions = () => {
+        return <DeleteView />;
+    };
+    const deleteUser = (login) => {
+        const filtered = users.filter((a) => a.login !== login);
+        setUsers(filtered);
     };
     return (
         <Container>
@@ -86,7 +87,9 @@ export default function Main({navigation}) {
                 data={users}
                 keyExtractor={(user) => user.login}
                 renderItem={({item}) => (
-                    <Swipeable renderLeftActions={renderLeftActions}>
+                    <Swipeable
+                        renderLeftActions={renderLeftActions}
+                        onSwipeableOpen={() => deleteUser(item.login)}>
                         <User>
                             <Avatar source={{uri: item.avatar}} />
                             <Name>{item.name}</Name>
