@@ -5,12 +5,12 @@ import PropTypes from 'prop-types';
 // import { Container } from './styles';
 
 export default function Repository({navigation, route}) {
-    return (
-        <WebView
-            source={{uri: 'https://infinite.red'}}
-            style={{marginTop: 20}}
-        />
-    );
+    navigation.setOptions({
+        title: route.params.data.name,
+    });
+    const url = route.params.data.html_url;
+
+    return <WebView source={{uri: url}} />;
 }
 Repository.propTypes = {
     navigation: PropTypes.shape({

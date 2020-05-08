@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
-import {Keyboard, ActivityIndicator} from 'react-native';
+import {Keyboard, ActivityIndicator, Text} from 'react-native';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import PropTypes from 'prop-types';
 
@@ -53,6 +54,14 @@ export default function Main({navigation}) {
         setUsers([...users, dados]);
         setLoading(false);
     };
+
+    const renderLeftActions = (progress, dragX) => {
+        const trans = dragX.interpolate({
+            inputRange: [0, 50, 100, 101],
+            outputRange: [-20, 0, 0, 1],
+        });
+        return <Text>ok</Text>;
+    };
     return (
         <Container>
             <Form>
@@ -77,17 +86,21 @@ export default function Main({navigation}) {
                 data={users}
                 keyExtractor={(user) => user.login}
                 renderItem={({item}) => (
-                    <User>
-                        <Avatar source={{uri: item.avatar}} />
-                        <Name>{item.name}</Name>
-                        <Bio>{item.bio}</Bio>
-                        <ProfileButton
-                            onPress={() => {
-                                navigation.navigate('User', {user: item});
-                            }}>
-                            <ProfileButtonText>Ver Perfil</ProfileButtonText>
-                        </ProfileButton>
-                    </User>
+                    <Swipeable renderLeftActions={renderLeftActions}>
+                        <User>
+                            <Avatar source={{uri: item.avatar}} />
+                            <Name>{item.name}</Name>
+                            <Bio>{item.bio}</Bio>
+                            <ProfileButton
+                                onPress={() => {
+                                    navigation.navigate('User', {user: item});
+                                }}>
+                                <ProfileButtonText>
+                                    Ver Perfil
+                                </ProfileButtonText>
+                            </ProfileButton>
+                        </User>
+                    </Swipeable>
                 )}
             />
         </Container>

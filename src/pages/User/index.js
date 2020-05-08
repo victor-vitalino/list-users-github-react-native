@@ -42,13 +42,15 @@ export default function User({navigation, route}) {
 
     const loadMore = async () => {
         // se ja foi chamado
-        if (loadingMore) return null;
-
-        setLoadingMore(true);
-        setPage(page + 1);
-        const response = await handleRequestApi();
-        setStars([...stars, ...response.data]);
-        setLoadingMore(false);
+        if (!loadingMore) {
+            if (stars.length > 10) {
+                setLoadingMore(true);
+                setPage(page + 1);
+                const response = await handleRequestApi();
+                setLoadingMore(false);
+                setStars([...stars, ...response.data]);
+            }
+        }
     };
     const footerComponent = () => {
         if (!loadingMore) return null;
@@ -60,6 +62,9 @@ export default function User({navigation, route}) {
         const response = await handleRequestApi();
         setStars(response.data);
         setRefresh(false);
+    };
+    const goToLink = (item) => {
+        navigation.navigate('Repository', {data: item});
     };
     useEffect(() => {
         handleStars();
@@ -80,14 +85,14 @@ export default function User({navigation, route}) {
             ) : (
                 <Stars
                     data={stars}
-                    onEndReachedThreshold={0.2}
+                    onEndReachedThreshold={0.1}
                     onEndReached={loadMore}
                     ListFooterComponent={footerComponent}
                     keyExtractor={(star) => String(star.id)}
                     refreshing={refresh}
                     onRefresh={refreshList}
                     renderItem={({item}) => (
-                        <Starred>
+                        <Starred onPress={() => goToLink(item)}>
                             <OwnerAvatar
                                 source={{uri: item.owner.avatar_url}}
                             />
